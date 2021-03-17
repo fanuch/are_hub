@@ -1,11 +1,32 @@
 package are_server
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
+// Represents a group of users listening to a data stream.
 type Channel struct {
 	Name     string `json:"name"`
 	Password string `json:"password"`
 	common   `bson:"inline"`
+}
+
+// Get a channel from a context.
+func ChannelFromCtx(ctx context.Context) (*Channel, error) {
+	v := ctx.Value(keyChannel)
+	c, ok := v.(*Channel)
+
+	if !ok {
+		return nil, fmt.Errorf("Could not assert %v as *Channel\n", v)
+	}
+
+	return c, nil
+}
+
+// Insert a channel into context.
+func (c *Channel) ToCtx(ctx context.Context) context.Context {
+	return context.WithValue(ctx, keyChannel, c)
 }
 
 type ChannelRepo interface {
