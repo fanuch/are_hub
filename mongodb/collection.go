@@ -108,7 +108,7 @@ func (c collection) UpdateID(ctx context.Context, hex string, ptr are_server.Arc
 	opts := options.FindOneAndUpdate()
 	opts.SetReturnDocument(options.After)
 
-	return c.get().FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{"$set": v}, opts).Decode(ptr)
+	return c.get().FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{"$set": ptr}, opts).Decode(ptr)
 }
 
 // Delete a document matching the hexadecimal-encoded ID.
