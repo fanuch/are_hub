@@ -1,7 +1,6 @@
 package http
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -109,22 +108,18 @@ func TestChannelStore(t *testing.T) {
 	repo := &mock.ChannelRepo{InsertFunc: fn}
 	controller := NewChannel(repo)
 
-	// create and marshal new channel
-	sent := are_server.Channel{Name: "Bentley Team M-Sport", Password: "abc123"}
-	reqBody, e := json.Marshal(sent)
-
-	if e != nil {
-		t.Fatal(e)
-	}
+	// create and embed a new channel
+	msport := are_server.Channel{Name: "Bentley Team M-Sport", Password: "abc123"}
 
 	// create a mock request
-	req, e := http.NewRequest(http.MethodPost, "/channel", bytes.NewReader(reqBody))
+	req, e := http.NewRequest(http.MethodPost, "/channel", nil)
 
 	if e != nil {
 		t.Fatal(e)
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	// update the request's context with the channel
+	req = req.WithContext(msport.ToCtx(req.Context()))
 
 	// create a response recorder and run the controller method
 	w := httptest.NewRecorder()
@@ -162,8 +157,8 @@ func TestChannelStore(t *testing.T) {
 	}
 
 	// compare the sent and received channels
-	if sent.Name != received.Name || sent.Password != received.Password {
-		t.Fatalf("Expected: %+v. Actual: %+v", sent, received)
+	if msport.Name != received.Name || msport.Password != received.Password {
+		t.Fatalf("Expected: %+v. Actual: %+v", msport, received)
 	}
 }
 
@@ -253,21 +248,17 @@ func TestChannelUpdate(t *testing.T) {
 
 	// mock channel
 	wrt := are_server.Channel{Name: "Belgian Audi Club WRT", Password: "abc123"}
-	reqBody, e := json.Marshal(wrt)
-
-	if e != nil {
-		t.Fatal(e)
-	}
 
 	// create mock request
 	p := httprouter.Param{Key: "id", Value: "1"}
-	req, e := http.NewRequest(http.MethodPut, "/channel/"+p.Value, bytes.NewReader(reqBody))
+	req, e := http.NewRequest(http.MethodPut, "/channel/"+p.Value, nil)
 
 	if e != nil {
 		t.Fatal(e)
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	// embed the updated channel in the request's context
+	req = req.WithContext(wrt.ToCtx(req.Context()))
 
 	// embed parameters in the request's context
 	uf.EmbedParams(req, p)
@@ -312,7 +303,36 @@ func TestChannelUpdate(t *testing.T) {
 
 	// check if Update returns a 404 error on an invalid ID
 	p = httprouter.Param{Key: "id", Value: "-1"}
-	test404(t, http.MethodPut, "/channel/"+p.Value, nil, controller.Update, p)
+	req, e = http.NewRequest(http.MethodPut, "/channel/"+p.Value, nil)
+
+	if e != nil {
+		t.Fatal(e)
+	}
+
+	// embed non-existant channel into the request's context
+	gpx := are_server.Channel{Name: "Grand Prix Extreme", Password: "porsche"}
+	req = req.WithContext(gpx.ToCtx(req.Context()))
+
+	// embed parameters
+	uf.EmbedParams(req, p)
+
+	// create a new response recorder and call the update method
+	w = httptest.NewRecorder()
+	e = controller.Update(w, req)
+
+	if e == nil {
+		t.Fatal("Expected: 404 Not found error. Actual: nil")
+	}
+
+	he, ok := e.(uf.HttpError)
+
+	if !ok {
+		t.Fatalf("Expected: 404 Not Found error. Actual: %+v", e)
+	}
+
+	if he.Code != http.StatusNotFound {
+		t.Fatalf("Expected: %d. Actual: %d", http.StatusNotFound, he.Code)
+	}
 }
 
 // Does it call repo.DeleteID with the correct ID?
