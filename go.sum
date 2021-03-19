@@ -1,0 +1,4 @@
+github.com/blacksfk/microframework v0.6.1 h1:lYMHHKa/Qj4XR97aDl6LhHujVWRaimvY46dxOviyAlI=
+github.com/blacksfk/microframework v0.6.1/go.mod h1:dvXICSvRIaURKlBeYT1TQw30EiXq7G6+NbmW4I0iybE=
+github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=
+github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
