@@ -21,7 +21,7 @@ func (r request) bodyStruct(req *http.Request, ptr interface{}) error {
 		return e
 	}
 
-	e = c.validate.Struct(ptr)
+	e = r.validate.Struct(ptr)
 
 	if e != nil {
 		return assertError(e)
@@ -42,14 +42,6 @@ func assertError(e error) error {
 	ve, ok := e.(validator.ValidationErrors)
 
 	if !ok {
-		// programmer error whoops
-		ive, ok := e.(validator.InvalidValidationError)
-
-		if !ok {
-			// something's really busted
-			return e
-		}
-
 		return uf.InternalServerError(e.Error())
 	}
 
