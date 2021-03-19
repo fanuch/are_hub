@@ -1,3 +1,6 @@
 # executable
 cmd/are_server/are_server
 cmd/are_server/are_server.exe
+
+# local config file
+cmd/are_server/config.json
