@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/blacksfk/are_server"
+	uf "github.com/blacksfk/microframework"
 )
 
 // CRUD controller that manipulates channel data in the provided repository.
@@ -16,37 +17,89 @@ func NewChannel(channels are_server.ChannelRepo) Channel {
 	return Channel{channels}
 }
 
-// TODO: implement
+// Get all channels.
 func (c Channel) Index(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(http.StatusOK)
+	channels, e := c.channels.All(r.Context())
 
-	return nil
+	if e != nil {
+		return e
+	}
+
+	return uf.SendJSON(w, channels)
 }
 
-// TODO: implement
+// Create a new channel.
 func (c Channel) Store(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(http.StatusOK)
+	// get the channel from the request's context
+	channel, e := are_server.ChannelFromCtx(r.Context())
 
-	return nil
+	if e != nil {
+		return e
+	}
+
+	// insert the new channel into the repository
+	e = c.channels.Insert(r.Context(), channel)
+
+	if e != nil {
+		return e
+	}
+
+	// return the created channel with the ID and timestamps
+	return uf.SendJSON(w, channel)
 }
 
-// TODO: implement
+// Find a specific channel by its ID.
 func (c Channel) Show(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(http.StatusOK)
+	channel, e := c.channels.FindID(r.Context(), uf.GetParam(r, "id"))
 
-	return nil
+	if e != nil {
+		if are_server.IsNoObjectsFound(e) {
+			return uf.NotFound(e.Error())
+		}
+
+		return e
+	}
+
+	return uf.SendJSON(w, channel)
 }
 
-// TODO: implement
+// Update a specific channel by its ID.
 func (c Channel) Update(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(http.StatusOK)
+	// get the channel embedded in the request's context
+	channel, e := are_server.ChannelFromCtx(r.Context())
 
-	return nil
+	if e != nil {
+		return e
+	}
+
+	// update the channel in the repository
+	e = c.channels.UpdateID(r.Context(), uf.GetParam(r, "id"), channel)
+
+	if e != nil {
+		if are_server.IsNoObjectsFound(e) {
+			return uf.NotFound(e.Error())
+		}
+
+		return e
+	}
+
+	// return the updated channel
+	return uf.SendJSON(w, channel)
 }
 
-// TODO: implement
+// Delete a specific channel by its ID.
 func (c Channel) Delete(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(http.StatusOK)
+	// delete and get the deleted channel
+	channel, e := c.channels.DeleteID(r.Context(), uf.GetParam(r, "id"))
 
-	return nil
+	if e != nil {
+		if are_server.IsNoObjectsFound(e) {
+			return uf.NotFound(e.Error())
+		}
+
+		return e
+	}
+
+	// return the deleted channel
+	return uf.SendJSON(w, channel)
 }
