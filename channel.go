@@ -40,7 +40,7 @@ type ChannelRepo interface {
 	FindID(context.Context, string) (*Channel, error)
 
 	// Find and update a channel by its ID.
-	UpdateID(context.Context, string, *Channel) error
+	UpdateID(context.Context, string, Archetype) error
 
 	// Find and delete a channel by its ID.
 	DeleteID(context.Context, string) (*Channel, error)
