@@ -1,29 +1,19 @@
 package are_server
 
-import "time"
-
+// All types should implement this interface so as to be compatible with the various
+// sub-packages.
 type Archetype interface {
+	// Should mutate the ID field to the value of the paramter.
 	SetID(string)
+
+	// Should mutate the ID field to a zero value. Eg. the empty string ("")
+	UnsetID()
+
+	// Should mutate the CreatedAt and UpdatedAt (or alternatively named) fields
+	// to the current time (preferably UTC+0)
 	Created()
+
+	// Should only mutate the UpdateAt (or similar) field to the current
+	// time (preferably UTC+0).
 	Updated()
-}
-
-// Implements Archetype.
-type common struct {
-	ID        string    `json:"id" bson:"_id,omitempty"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-}
-
-func (c *common) SetID(id string) {
-	c.ID = id
-}
-
-func (c *common) Created() {
-	c.CreatedAt = time.Now().UTC()
-	c.UpdatedAt = c.CreatedAt
-}
-
-func (c *common) Updated() {
-	c.UpdatedAt = time.Now().UTC()
 }
