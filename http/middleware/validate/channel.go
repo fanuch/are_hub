@@ -25,7 +25,7 @@ type channelStore struct {
 
 // Validate the request body with rules defined above. If successful,
 // create an are_server.Channel and attach it to the request's context.
-func (c Channel) ChannelStore(r *http.Request) error {
+func (c Channel) Store(r *http.Request) error {
 	temp := channelStore{}
 	e := c.bodyStruct(r, &temp)
 

@@ -12,6 +12,6 @@ func routes(s *uf.Server, services *services) {
 	c := http.NewChannel(services.channels)
 	v := validate.NewChannel()
 
-	s.NewGroup("/channel").Get(c.Index).Post(c.Store, v.ChannelStore)
-	s.NewGroup("/channel/:id").Get(c.Show).Put(c.Update, v.ChannelStore).Delete(c.Delete)
+	s.NewGroup("/channel").Get(c.Index).Post(c.Store, v.Store)
+	s.NewGroup("/channel/:id").Get(c.Show).Put(c.Update, v.Store).Delete(c.Delete)
 }
