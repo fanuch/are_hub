@@ -3,6 +3,8 @@ github.com/aws/aws-sdk-go v1.34.28 h1:sscPpn/Ns3i0F4HPEWAVcwdIRaZZCuL7llJ2/60yPI
 github.com/aws/aws-sdk-go v1.34.28/go.mod h1:H7NKnBqNVzoTJpGfLrQkkD+ytBA93eiDYi/+8rV9s48=
 github.com/blacksfk/microframework v0.6.1 h1:lYMHHKa/Qj4XR97aDl6LhHujVWRaimvY46dxOviyAlI=
 github.com/blacksfk/microframework v0.6.1/go.mod h1:dvXICSvRIaURKlBeYT1TQw30EiXq7G6+NbmW4I0iybE=
+github.com/blacksfk/microframework v0.6.2 h1:apJazdxwSvZOjv4SvCLRmgvCUKh/kRUkOW4qKZs9LIA=
+github.com/blacksfk/microframework v0.6.2/go.mod h1:dvXICSvRIaURKlBeYT1TQw30EiXq7G6+NbmW4I0iybE=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
