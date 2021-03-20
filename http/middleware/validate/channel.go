@@ -19,7 +19,7 @@ func NewChannel() Channel {
 }
 
 type channelStore struct {
-	Name     string `validate:"required,alphanumunicode"`
+	Name     string `validate:"required"`
 	Password string `validate:"required"`
 }
 
