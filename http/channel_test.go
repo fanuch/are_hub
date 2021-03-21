@@ -88,10 +88,6 @@ func TestChannelIndex(t *testing.T) {
 		if received[i].Name != channels[i].Name {
 			t.Fatalf("Expected: %s. Actual: %s.", channels[i].Name, received[i].Name)
 		}
-
-		if received[i].Password != channels[i].Password {
-			t.Fatalf("Expected: %s. Actual: %s.", channels[i].Password, received[i].Password)
-		}
 	}
 }
 
@@ -157,7 +153,7 @@ func TestChannelStore(t *testing.T) {
 	}
 
 	// compare the sent and received channels
-	if msport.Name != received.Name || msport.Password != received.Password {
+	if msport.Name != received.Name {
 		t.Fatalf("Expected: %+v. Actual: %+v", msport, received)
 	}
 }
@@ -220,7 +216,7 @@ func TestChannelShow(t *testing.T) {
 	}
 
 	// compare the expected and received channels
-	if received.Name != wrt.Name || received.Password != wrt.Password {
+	if received.Name != wrt.Name {
 		t.Fatalf("Expected: %+v. Actual: %+v.", wrt, received)
 	}
 
@@ -234,7 +230,7 @@ func TestChannelShow(t *testing.T) {
 // Does it return the updated channel?
 func TestChannelUpdate(t *testing.T) {
 	// mock UpdateID function
-	fn := func(_ context.Context, str string, ch *are_server.Channel) error {
+	fn := func(_ context.Context, str string, v are_server.Archetype) error {
 		_, e := findChannelID(nil, str)
 
 		// the update itself has no bearing on the test so simply return
@@ -297,7 +293,7 @@ func TestChannelUpdate(t *testing.T) {
 	}
 
 	// compare the sent and received channels
-	if wrt.Name != received.Name || wrt.Password != received.Password {
+	if wrt.Name != received.Name {
 		t.Fatalf("Expected: %+v. Actual: %+v", wrt, received)
 	}
 
@@ -394,7 +390,7 @@ func TestChannelDelete(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	if received.Name != wrt.Name || received.Password != wrt.Password {
+	if received.Name != wrt.Name {
 		t.Fatalf("Expected: %v. Actual: %v.", wrt, received)
 	}
 

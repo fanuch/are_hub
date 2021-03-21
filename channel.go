@@ -5,10 +5,20 @@ import (
 	"fmt"
 )
 
+// password implements json.Marshaler.
+type password string
+
+// Prevent passwords from being marshaled and sent to clients by implementing
+// json.Marshaler and returning a empty byte slice. This allows for passwords
+// to be unmarshaled without issue.
+func (p password) MarshalJSON() ([]byte, error) {
+	return []byte(`""`), nil
+}
+
 // Represents a group of users listening to a data stream.
 type Channel struct {
 	Name     string `json:"name"`
-	Password string `json:"password"`
+	Password password
 	common   `bson:"inline"`
 }
 
