@@ -17,7 +17,7 @@ type ChannelRepo struct {
 	FindIDFunc   func(context.Context, string) (*are_server.Channel, error)
 	FindIDCalled bool
 
-	UpdateIDFunc   func(context.Context, string, *are_server.Channel) error
+	UpdateIDFunc   func(context.Context, string, are_server.Archetype) error
 	UpdateIDCalled bool
 
 	DeleteIDFunc   func(context.Context, string) (*are_server.Channel, error)
@@ -45,7 +45,7 @@ func (r *ChannelRepo) FindID(ctx context.Context, id string) (*are_server.Channe
 	return r.FindIDFunc(ctx, id)
 }
 
-func (r *ChannelRepo) UpdateID(ctx context.Context, id string, channel *are_server.Channel) error {
+func (r *ChannelRepo) UpdateID(ctx context.Context, id string, channel are_server.Archetype) error {
 	r.UpdateIDCalled = true
 
 	return r.UpdateIDFunc(ctx, id, channel)
