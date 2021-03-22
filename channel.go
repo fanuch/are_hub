@@ -22,6 +22,11 @@ type Channel struct {
 	common   `bson:"inline"`
 }
 
+// Create a new channel.
+func NewChannel(name, pw string) *Channel {
+	return &Channel{Name: name, Password: password(pw)}
+}
+
 // Get a channel from a context.
 func ChannelFromCtx(ctx context.Context) (*Channel, error) {
 	v := ctx.Value(keyChannel)
@@ -37,6 +42,16 @@ func ChannelFromCtx(ctx context.Context) (*Channel, error) {
 // Insert a channel into context.
 func (c *Channel) ToCtx(ctx context.Context) context.Context {
 	return context.WithValue(ctx, keyChannel, c)
+}
+
+// Retrieve the channel's password as a string.
+func (c *Channel) PasswordStr() string {
+	return string(c.Password)
+}
+
+// Mutate the channel's password to the string provided.
+func (c *Channel) SetPasswordStr(pw string) {
+	c.Password = password(pw)
 }
 
 type ChannelRepo interface {
