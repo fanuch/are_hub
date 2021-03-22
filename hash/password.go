@@ -36,7 +36,7 @@ const (
 
 	// How many parameters are stored in the ARGON2_FORMAT
 	// argon2id + version + time + memory + threads + salt + hash
-	ARGON2_FORMAT_COUNT = 6
+	ARGON2_FORMAT_COUNT = 7
 )
 
 // Generate an argon2 hash of the provided plaintext password using the parameters
