@@ -19,8 +19,9 @@ func NewChannel() Channel {
 }
 
 type channelStore struct {
-	Name     string `validate:"required"`
-	Password string `validate:"required"`
+	Name            string `validate:"required"`
+	Password        string `validate:"required,eqfield=ConfirmPassword"`
+	ConfirmPassword string `validate:"required"`
 }
 
 // Validate the request body with rules defined above. If successful,
@@ -34,10 +35,7 @@ func (c Channel) Store(r *http.Request) error {
 	}
 
 	// create a channel (domain type) out of the validation object
-	channel := &are_server.Channel{
-		Name:     temp.Name,
-		Password: temp.Password,
-	}
+	channel := are_server.NewChannel(temp.Name, temp.Password)
 
 	// insert the create channel into r's context
 	*r = *r.WithContext(channel.ToCtx(r.Context()))
