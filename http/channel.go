@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/blacksfk/are_server"
+	"github.com/blacksfk/are_server/hash"
 	uf "github.com/blacksfk/microframework"
 )
 
@@ -36,6 +37,16 @@ func (c Channel) Store(w http.ResponseWriter, r *http.Request) error {
 	if e != nil {
 		return e
 	}
+
+	// hash the new channel's password
+	hash, e := hash.Password(channel.PasswordStr())
+
+	if e != nil {
+		return e
+	}
+
+	// replace the channel's plaintext password with the generated hash
+	channel.SetPasswordStr(hash)
 
 	// insert the new channel into the repository
 	e = c.channels.Insert(r.Context(), channel)
@@ -71,6 +82,16 @@ func (c Channel) Update(w http.ResponseWriter, r *http.Request) error {
 	if e != nil {
 		return e
 	}
+
+	// hash the new password
+	hash, e := hash.Password(channel.PasswordStr())
+
+	if e != nil {
+		return e
+	}
+
+	// replace the channel's plaintext password with the generated hash
+	channel.SetPasswordStr(hash)
 
 	// update the channel in the repository
 	e = c.channels.UpdateID(r.Context(), uf.GetParam(r, "id"), channel)
