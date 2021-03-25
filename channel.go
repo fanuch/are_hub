@@ -19,7 +19,7 @@ func (p password) MarshalJSON() ([]byte, error) {
 type Channel struct {
 	Name     string `json:"name"`
 	Password password
-	common   `bson:"inline"`
+	Common   `bson:",inline"`
 }
 
 // Create a new channel.
