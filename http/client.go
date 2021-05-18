@@ -2,7 +2,6 @@ package http
 
 import (
 	"encoding/hex"
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -38,8 +37,6 @@ func newClient(conn *websocket.Conn) *client {
 
 	// encode the random bytes as hex
 	id := hex.EncodeToString(bytes)
-
-	fmt.Println("generated id:", id)
 
 	return &client{id, conn, make(chan []byte, BUF_LEN)}
 }
