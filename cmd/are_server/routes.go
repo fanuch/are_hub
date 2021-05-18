@@ -25,5 +25,6 @@ func routes(s *uf.Server, services *services) {
 	ts := http.NewTelemetryServer(opts, services.channels)
 
 	s.Get("/subscribe/:id", ts.Subscribe)
-	s.Get("/publish/:id", ts.Publish)
+	// s.Get("/publish/:id", ts.Publish)
+	s.Post("/publish/:id", ts.Publish)
 }

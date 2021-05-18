@@ -37,28 +37,89 @@ func NewTelemetryServer(o *websocket.AcceptOptions, r are_server.ChannelRepo) *T
 	}
 }
 
-// Handle upgrading publisher clients to a websocket.
+// Broadcast messages to connected clients (connected via websockets).
 func (ts *TelemetryServer) Publish(w http.ResponseWriter, r *http.Request) error {
 	id := uf.GetParam(r, "id")
 
-	// check that an ID was actually provided before upgrading the connection
 	if len(id) == 0 {
-		return uf.BadRequest("Expected channel ID as URL parameter")
+		// channel ID is required to broadcast messages
+		return uf.BadRequest("Channel ID required.")
 	}
 
-	conn, e := websocket.Accept(w, r, ts.accept)
+	// until a complete authentication and authorisation system is implemented
+	// stick with sending the password with every request in the "Authorization"
+	// header
+	plaintext := r.Header.Get("Authorization")
+
+	if len(plaintext) == 0 {
+		return uf.BadRequest("Channel password required.")
+	}
+
+	// check if the channel already exists in the map
+	tc, ok := ts.channels[id]
+
+	if !ok {
+		// channel not in map, find it in the DB
+		c, e := ts.repo.FindID(r.Context(), id)
+
+		if e != nil {
+			if are_server.IsNoObjectsFound(e) {
+				return uf.NotFound(e.Error())
+			}
+
+			return e
+		}
+
+		tc = newTelemetryChannel(c)
+		ts.addChannel(tc)
+	}
+
+	// compare the recieved password with the known password
+	match, e := hash.CmpPassword(tc.PasswordStr(), plaintext)
 
 	if e != nil {
-		// the library writes its own HTTP error responses instead of letting the
-		// user handle the HTTP errors themselves
-		return nil
+		return e
 	}
 
-	// connection established; HTTP handling has finished.
-	go ts.publish(id, conn)
+	if !match {
+		return uf.Unauthorized("Incorrect credentials.")
+	}
+
+	// expect JSON but don't decode it
+	bytes, e := uf.ReadBody(r, "application/json")
+
+	if e != nil {
+		return e
+	}
+
+	// broadcast the encoded json bytes to the clients
+	tc.broadcast(bytes)
 
 	return nil
 }
+
+// // Handle upgrading publisher clients to a websocket.
+// func (ts *TelemetryServer) Publish(w http.ResponseWriter, r *http.Request) error {
+// 	id := uf.GetParam(r, "id")
+
+// 	// check that an ID was actually provided before upgrading the connection
+// 	if len(id) == 0 {
+// 		return uf.BadRequest("Expected channel ID as URL parameter")
+// 	}
+
+// 	conn, e := websocket.Accept(w, r, ts.accept)
+
+// 	if e != nil {
+// 		// the library writes its own HTTP error responses instead of letting the
+// 		// user handle the HTTP errors themselves
+// 		return nil
+// 	}
+
+// 	// connection established; HTTP handling has finished.
+// 	go ts.publish(id, conn)
+
+// 	return nil
+// }
 
 // Handle upgrade subscriber clients to a websocket.
 func (ts *TelemetryServer) Subscribe(w http.ResponseWriter, r *http.Request) error {
@@ -148,59 +209,59 @@ func (ts *TelemetryServer) subscribe(id string, conn *websocket.Conn) {
 }
 
 // Publishing procedure and message handling.
-func (ts *TelemetryServer) publish(id string, conn *websocket.Conn) {
-	tc, e := ts.procedure(id, conn)
+// func (ts *TelemetryServer) publish(id string, conn *websocket.Conn) {
+// 	tc, e := ts.procedure(id, conn)
 
-	if e != nil {
-		handleError(e, conn)
+// 	if e != nil {
+// 		handleError(e, conn)
 
-		return
-	}
+// 		return
+// 	}
 
-	e = tc.setPub(conn)
+// 	e = tc.setPub(conn)
 
-	if e != nil {
-		handleError(e, conn)
+// 	if e != nil {
+// 		handleError(e, conn)
 
-		return
-	}
+// 		return
+// 	}
 
-	// send all good response
-	bytes, e := json.Marshal(challengeSucceededResponse())
+// 	// send all good response
+// 	bytes, e := json.Marshal(challengeSucceededResponse())
 
-	if e != nil {
-		handleError(e, conn)
-		tc.removePub()
+// 	if e != nil {
+// 		handleError(e, conn)
+// 		tc.removePub()
 
-		return
-	}
+// 		return
+// 	}
 
-	e = writeTimeout(context.Background(), timeout, conn, bytes)
+// 	e = writeTimeout(context.Background(), timeout, conn, bytes)
 
-	if e != nil {
-		handleError(e, conn)
-		tc.removePub()
+// 	if e != nil {
+// 		handleError(e, conn)
+// 		tc.removePub()
 
-		return
-	}
+// 		return
+// 	}
 
-	// handle sending/receiving of messages
-	for {
-		// if the publisher takes longer than a minute, disconnect them
-		bytes, e := readTimeout(context.Background(), time.Minute, conn)
+// 	// handle sending/receiving of messages
+// 	for {
+// 		// if the publisher takes longer than a minute, disconnect them
+// 		bytes, e := readTimeout(context.Background(), time.Minute, conn)
 
-		if e != nil {
-			// something broke; disconnect the publisher
-			handleError(e, conn)
-			tc.removePub()
+// 		if e != nil {
+// 			// something broke; disconnect the publisher
+// 			handleError(e, conn)
+// 			tc.removePub()
 
-			return
-		}
+// 			return
+// 		}
 
-		// send the data to all of the clients on the same telemetry channel
-		tc.broadcast(bytes)
-	}
-}
+// 		// send the data to all of the clients on the same telemetry channel
+// 		tc.broadcast(bytes)
+// 	}
+// }
 
 // Procedure (protocol) that the connecting client is expected to follow to establish
 // itself as a publisher/subscriber of the channel it requested. See the protocol documentation
