@@ -46,10 +46,10 @@ func (ts *TelemetryServer) Publish(w http.ResponseWriter, r *http.Request) error
 		return uf.BadRequest("Channel ID required.")
 	}
 
-	// until a complete authentication and authorisation system is implemented
-	// stick with sending the password with every request in the "Authorization"
-	// header
-	plaintext := r.Header.Get("Authorization")
+	// until a complete authentication and authorisation system is
+	// implemented stick with sending the password with every
+	// request in the "Channel-Password" header
+	plaintext := r.Header.Get("Channel-Password")
 
 	if len(plaintext) == 0 {
 		return uf.BadRequest("Channel password required.")
