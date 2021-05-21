@@ -4,14 +4,14 @@ import (
 	"context"
 	"log"
 
-	"github.com/blacksfk/are_server"
-	"github.com/blacksfk/are_server/mongodb"
+	"github.com/blacksfk/are_hub"
+	"github.com/blacksfk/are_hub/mongodb"
 )
 
 // Wraps various database tables and services that
 // require initilisation.
 type services struct {
-	channels are_server.ChannelRepo
+	channels are_hub.ChannelRepo
 }
 
 // Initialise various services and create mongodb collections based on conf. This function

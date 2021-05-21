@@ -3,7 +3,7 @@ package validate
 import (
 	"net/http"
 
-	"github.com/blacksfk/are_server"
+	"github.com/blacksfk/are_hub"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -25,7 +25,7 @@ type channelStore struct {
 }
 
 // Validate the request body with rules defined above. If successful,
-// create an are_server.Channel and attach it to the request's context.
+// create an are_hub.Channel and attach it to the request's context.
 func (c Channel) Store(r *http.Request) error {
 	temp := channelStore{}
 	e := c.bodyStruct(r, &temp)
@@ -35,7 +35,7 @@ func (c Channel) Store(r *http.Request) error {
 	}
 
 	// create a channel (domain type) out of the validation object
-	channel := are_server.NewChannel(temp.Name, temp.Password)
+	channel := are_hub.NewChannel(temp.Name, temp.Password)
 
 	// insert the create channel into r's context
 	*r = *r.WithContext(channel.ToCtx(r.Context()))

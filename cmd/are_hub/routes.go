@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/blacksfk/are_server/http"
-	"github.com/blacksfk/are_server/http/middleware/validate"
+	"github.com/blacksfk/are_hub/http"
+	"github.com/blacksfk/are_hub/http/middleware/validate"
 	uf "github.com/blacksfk/microframework"
 	"nhooyr.io/websocket"
 )

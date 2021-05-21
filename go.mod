@@ -1,4 +1,4 @@
-module github.com/blacksfk/are_server
+module github.com/blacksfk/are_hub
 
 go 1.16
 

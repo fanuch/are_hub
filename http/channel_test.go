@@ -9,14 +9,14 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/blacksfk/are_server"
-	"github.com/blacksfk/are_server/mock"
+	"github.com/blacksfk/are_hub"
+	"github.com/blacksfk/are_hub/mock"
 	uf "github.com/blacksfk/microframework"
 	"github.com/julienschmidt/httprouter"
 )
 
 // Test data.
-var channels []are_server.Channel = []are_server.Channel{
+var channels []are_hub.Channel = []are_hub.Channel{
 	{Name: "Audi Sport Team WRT", Password: "abc123"},
 	{Name: "Mercedes-AMG Team Black Falcon", Password: "lol123"},
 }
@@ -26,7 +26,7 @@ var channels []are_server.Channel = []are_server.Channel{
 // Does it return all channels?
 func TestChannelIndex(t *testing.T) {
 	// mock All function
-	fn := func(_ context.Context) ([]are_server.Channel, error) {
+	fn := func(_ context.Context) ([]are_hub.Channel, error) {
 		return channels, nil
 	}
 
@@ -68,7 +68,7 @@ func TestChannelIndex(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	var received []are_server.Channel
+	var received []are_hub.Channel
 	e = json.Unmarshal(body, &received)
 
 	if e != nil {
@@ -96,7 +96,7 @@ func TestChannelIndex(t *testing.T) {
 // Does it return the new channel?
 func TestChannelStore(t *testing.T) {
 	// mock Insert function
-	fn := func(_ context.Context, v are_server.Archetype) error {
+	fn := func(_ context.Context, v are_hub.Archetype) error {
 		return nil
 	}
 
@@ -105,7 +105,7 @@ func TestChannelStore(t *testing.T) {
 	controller := NewChannel(repo)
 
 	// create and embed a new channel
-	msport := are_server.Channel{Name: "Bentley Team M-Sport", Password: "abc123"}
+	msport := are_hub.Channel{Name: "Bentley Team M-Sport", Password: "abc123"}
 
 	// create a mock request
 	req, e := http.NewRequest(http.MethodPost, "/channel", nil)
@@ -145,7 +145,7 @@ func TestChannelStore(t *testing.T) {
 	}
 
 	// unmarshal the response body
-	received := are_server.Channel{}
+	received := are_hub.Channel{}
 	e = json.Unmarshal(resBody, &received)
 
 	if e != nil {
@@ -208,7 +208,7 @@ func TestChannelShow(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	received := are_server.Channel{}
+	received := are_hub.Channel{}
 	e = json.Unmarshal(body, &received)
 
 	if e != nil {
@@ -230,7 +230,7 @@ func TestChannelShow(t *testing.T) {
 // Does it return the updated channel?
 func TestChannelUpdate(t *testing.T) {
 	// mock UpdateID function
-	fn := func(_ context.Context, str string, v are_server.Archetype) error {
+	fn := func(_ context.Context, str string, v are_hub.Archetype) error {
 		_, e := findChannelID(nil, str)
 
 		// the update itself has no bearing on the test so simply return
@@ -243,7 +243,7 @@ func TestChannelUpdate(t *testing.T) {
 	controller := NewChannel(repo)
 
 	// mock channel
-	wrt := are_server.Channel{Name: "Belgian Audi Club WRT", Password: "abc123"}
+	wrt := are_hub.Channel{Name: "Belgian Audi Club WRT", Password: "abc123"}
 
 	// create mock request
 	p := httprouter.Param{Key: "id", Value: "1"}
@@ -285,7 +285,7 @@ func TestChannelUpdate(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	received := are_server.Channel{}
+	received := are_hub.Channel{}
 	e = json.Unmarshal(resBody, &received)
 
 	if e != nil {
@@ -306,7 +306,7 @@ func TestChannelUpdate(t *testing.T) {
 	}
 
 	// embed non-existant channel into the request's context
-	gpx := are_server.Channel{Name: "Grand Prix Extreme", Password: "porsche"}
+	gpx := are_hub.Channel{Name: "Grand Prix Extreme", Password: "porsche"}
 	req = req.WithContext(gpx.ToCtx(req.Context()))
 
 	// embed parameters
@@ -383,7 +383,7 @@ func TestChannelDelete(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	received := &are_server.Channel{}
+	received := &are_hub.Channel{}
 	e = json.Unmarshal(body, received)
 
 	if e != nil {
@@ -399,7 +399,7 @@ func TestChannelDelete(t *testing.T) {
 	test404(t, http.MethodDelete, "/channel/"+p.Value, nil, controller.Delete, p)
 }
 
-func findChannelID(_ context.Context, str string) (*are_server.Channel, error) {
+func findChannelID(_ context.Context, str string) (*are_hub.Channel, error) {
 	id64, e := strconv.ParseInt(str, 10, 64)
 
 	if e != nil {
@@ -410,7 +410,7 @@ func findChannelID(_ context.Context, str string) (*are_server.Channel, error) {
 	idx := id - 1
 
 	if idx < 0 || idx >= len(channels) {
-		return nil, are_server.NewNoObjectsFound("channels", "id == "+str)
+		return nil, are_hub.NewNoObjectsFound("channels", "id == "+str)
 	}
 
 	return &channels[id-1], nil

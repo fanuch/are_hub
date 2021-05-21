@@ -1,4 +1,4 @@
-package are_server
+package are_hub
 
 // All types should implement this interface so as to be compatible with the various
 // sub-packages.

@@ -3,18 +3,18 @@ package http
 import (
 	"net/http"
 
-	"github.com/blacksfk/are_server"
-	"github.com/blacksfk/are_server/hash"
+	"github.com/blacksfk/are_hub"
+	"github.com/blacksfk/are_hub/hash"
 	uf "github.com/blacksfk/microframework"
 )
 
 // CRUD controller that manipulates channel data in the provided repository.
 type Channel struct {
-	channels are_server.ChannelRepo
+	channels are_hub.ChannelRepo
 }
 
 // Create a new channel controller.
-func NewChannel(channels are_server.ChannelRepo) Channel {
+func NewChannel(channels are_hub.ChannelRepo) Channel {
 	return Channel{channels}
 }
 
@@ -32,7 +32,7 @@ func (c Channel) Index(w http.ResponseWriter, r *http.Request) error {
 // Create a new channel.
 func (c Channel) Store(w http.ResponseWriter, r *http.Request) error {
 	// get the channel from the request's context
-	channel, e := are_server.ChannelFromCtx(r.Context())
+	channel, e := are_hub.ChannelFromCtx(r.Context())
 
 	if e != nil {
 		return e
@@ -64,7 +64,7 @@ func (c Channel) Show(w http.ResponseWriter, r *http.Request) error {
 	channel, e := c.channels.FindID(r.Context(), uf.GetParam(r, "id"))
 
 	if e != nil {
-		if are_server.IsNoObjectsFound(e) {
+		if are_hub.IsNoObjectsFound(e) {
 			return uf.NotFound(e.Error())
 		}
 
@@ -77,7 +77,7 @@ func (c Channel) Show(w http.ResponseWriter, r *http.Request) error {
 // Update a specific channel by its ID.
 func (c Channel) Update(w http.ResponseWriter, r *http.Request) error {
 	// get the channel embedded in the request's context
-	channel, e := are_server.ChannelFromCtx(r.Context())
+	channel, e := are_hub.ChannelFromCtx(r.Context())
 
 	if e != nil {
 		return e
@@ -97,7 +97,7 @@ func (c Channel) Update(w http.ResponseWriter, r *http.Request) error {
 	e = c.channels.UpdateID(r.Context(), uf.GetParam(r, "id"), channel)
 
 	if e != nil {
-		if are_server.IsNoObjectsFound(e) {
+		if are_hub.IsNoObjectsFound(e) {
 			return uf.NotFound(e.Error())
 		}
 
@@ -114,7 +114,7 @@ func (c Channel) Delete(w http.ResponseWriter, r *http.Request) error {
 	channel, e := c.channels.DeleteID(r.Context(), uf.GetParam(r, "id"))
 
 	if e != nil {
-		if are_server.IsNoObjectsFound(e) {
+		if are_hub.IsNoObjectsFound(e) {
 			return uf.NotFound(e.Error())
 		}
 

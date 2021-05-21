@@ -1,6 +1,6 @@
 # executable
-cmd/are_server/are_server
-cmd/are_server/are_server.exe
+cmd/are_hub/are_hub
+cmd/are_hub/are_hub.exe
 
 # local config file
-cmd/are_server/config.json
+cmd/are_hub/config.json

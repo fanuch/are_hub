@@ -1,6 +1,6 @@
-# ACC Race Engineer server
+# ACC Race Engineer hub
 
-This is the the server application that receives data and forwards it to the appropriate connected websocket clients.
+This is the hub application that receives data and forwards it to the appropriate connected websocket clients.
 
 ## Setup
 TODO

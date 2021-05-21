@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/blacksfk/are_server"
-	"github.com/blacksfk/are_server/hash"
+	"github.com/blacksfk/are_hub"
+	"github.com/blacksfk/are_hub/hash"
 	uf "github.com/blacksfk/microframework"
 	"nhooyr.io/websocket"
 )
@@ -22,14 +22,14 @@ var (
 // subscribers on the same channel.
 type TelemetryServer struct {
 	accept *websocket.AcceptOptions
-	repo   are_server.ChannelRepo
+	repo   are_hub.ChannelRepo
 
 	mtx      sync.Mutex
 	channels map[string]*telemetryChannel
 }
 
 // Create a new telemetry server.
-func NewTelemetryServer(o *websocket.AcceptOptions, r are_server.ChannelRepo) *TelemetryServer {
+func NewTelemetryServer(o *websocket.AcceptOptions, r are_hub.ChannelRepo) *TelemetryServer {
 	return &TelemetryServer{
 		accept:   o,
 		repo:     r,
@@ -63,7 +63,7 @@ func (ts *TelemetryServer) Publish(w http.ResponseWriter, r *http.Request) error
 		c, e := ts.repo.FindID(r.Context(), id)
 
 		if e != nil {
-			if are_server.IsNoObjectsFound(e) {
+			if are_hub.IsNoObjectsFound(e) {
 				return uf.NotFound(e.Error())
 			}
 
@@ -271,7 +271,7 @@ func (ts *TelemetryServer) procedure(id string, conn *websocket.Conn) (*telemetr
 	channel, e := ts.repo.FindID(context.TODO(), id)
 
 	if e != nil {
-		if are_server.IsNoObjectsFound(e) {
+		if are_hub.IsNoObjectsFound(e) {
 			return nil, wsNotFound(e.Error())
 		}
 

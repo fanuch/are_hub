@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/blacksfk/are_server"
+	"github.com/blacksfk/are_hub"
 	uf "github.com/blacksfk/microframework"
 )
 
@@ -45,7 +45,7 @@ func TestStoreValid(t *testing.T) {
 	}
 
 	// confirm the channel was stored in the request
-	_, e = are_server.ChannelFromCtx(r.Context())
+	_, e = are_hub.ChannelFromCtx(r.Context())
 
 	if e != nil {
 		t.Fatal(e)
@@ -55,7 +55,7 @@ func TestStoreValid(t *testing.T) {
 // Does it reject requests with incorrect content-types?
 func TestStoreBadCT(t *testing.T) {
 	// create mock data
-	embedded := are_server.Channel{
+	embedded := are_hub.Channel{
 		Name:     "R-Motorsport AMR",
 		Password: "amr",
 	}
@@ -97,7 +97,7 @@ func TestStoreBadCT(t *testing.T) {
 // Does it reject invalid channels with a 400 Bad Request error?
 func TestStoreInvalid(t *testing.T) {
 	// create mock data
-	embedded := are_server.Channel{
+	embedded := are_hub.Channel{
 		Name:     "",
 		Password: "",
 	}

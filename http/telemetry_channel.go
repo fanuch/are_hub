@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/blacksfk/are_server"
+	"github.com/blacksfk/are_hub"
 	"nhooyr.io/websocket"
 )
 
@@ -13,10 +13,10 @@ const (
 	MAX_SUBS = 10
 )
 
-// Wraps are_server.Channel with a publisher client, a map of subscriber clients,
+// Wraps are_hub.Channel with a publisher client, a map of subscriber clients,
 // and mutual exclusion locks.
 type telemetryChannel struct {
-	*are_server.Channel
+	*are_hub.Channel
 
 	pubMtx sync.Mutex
 	pub    *websocket.Conn
@@ -25,7 +25,7 @@ type telemetryChannel struct {
 	subs   map[string]*client
 }
 
-func newTelemetryChannel(c *are_server.Channel) *telemetryChannel {
+func newTelemetryChannel(c *are_hub.Channel) *telemetryChannel {
 	subs := make(map[string]*client, MAX_SUBS)
 
 	return &telemetryChannel{c, sync.Mutex{}, nil, sync.Mutex{}, subs}

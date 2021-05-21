@@ -1,4 +1,4 @@
-package are_server
+package are_hub
 
 import "context"
 

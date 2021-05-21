@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/blacksfk/are_server"
+	"github.com/blacksfk/are_hub"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -46,7 +46,7 @@ func (c collection) all(ctx context.Context, slice interface{}) error {
 }
 
 // Get a document matching the hexadecimal-encoded ID.
-func (c collection) findID(ctx context.Context, hex string, ptr are_server.Archetype) error {
+func (c collection) findID(ctx context.Context, hex string, ptr are_hub.Archetype) error {
 	id, e := primitive.ObjectIDFromHex(hex)
 
 	if e != nil {
@@ -58,7 +58,7 @@ func (c collection) findID(ctx context.Context, hex string, ptr are_server.Arche
 
 	if e := result.Err(); e != nil {
 		if e == mongo.ErrNoDocuments {
-			return are_server.NewNoObjectsFound("id: "+hex, coll.Name())
+			return are_hub.NewNoObjectsFound("id: "+hex, coll.Name())
 		}
 
 		return e
@@ -68,7 +68,7 @@ func (c collection) findID(ctx context.Context, hex string, ptr are_server.Arche
 }
 
 // Insert a document.
-func (c collection) Insert(ctx context.Context, ptr are_server.Archetype) error {
+func (c collection) Insert(ctx context.Context, ptr are_hub.Archetype) error {
 	ptr.Created()
 
 	result, e := c.get().InsertOne(ctx, ptr)
@@ -93,7 +93,7 @@ func (c collection) Insert(ctx context.Context, ptr are_server.Archetype) error 
 }
 
 // Update a document matching the hexadecimal-encoded ID.
-func (c collection) UpdateID(ctx context.Context, hex string, ptr are_server.Archetype) error {
+func (c collection) UpdateID(ctx context.Context, hex string, ptr are_hub.Archetype) error {
 	id, e := primitive.ObjectIDFromHex(hex)
 
 	if e != nil {
@@ -112,7 +112,7 @@ func (c collection) UpdateID(ctx context.Context, hex string, ptr are_server.Arc
 }
 
 // Delete a document matching the hexadecimal-encoded ID.
-func (c collection) deleteID(ctx context.Context, hex string, ptr are_server.Archetype) error {
+func (c collection) deleteID(ctx context.Context, hex string, ptr are_hub.Archetype) error {
 	id, e := primitive.ObjectIDFromHex(hex)
 
 	if e != nil {

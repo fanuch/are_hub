@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/blacksfk/are_server/mongodb"
+	"github.com/blacksfk/are_hub/mongodb"
 )
 
 // Application configuration parameters.
