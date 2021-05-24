@@ -94,6 +94,7 @@ func (ts *TelemetryServer) Publish(w http.ResponseWriter, r *http.Request) error
 
 	// broadcast the encoded json bytes to the clients
 	tc.broadcast(bytes)
+	w.WriteHeader(200)
 
 	return nil
 }
