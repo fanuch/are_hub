@@ -90,7 +90,13 @@ func (c *telemetryChannel) broadcast(bytes []byte) {
 	c.subMtx.Lock()
 	defer c.subMtx.Unlock()
 
-	for _, sub := range c.subs {
-		sub.buffer <- bytes
+	for id, sub := range c.subs {
+		select {
+		case sub.buffer <- bytes:
+		default:
+			// subscriber's buffer is full; drop them like a 10 tonne hammer
+			go sub.drop(WS_ERROR_TIMEOUT, "Message buffer full")
+			delete(c.subs, id)
+		}
 	}
 }
