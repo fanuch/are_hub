@@ -42,6 +42,8 @@ func main() {
 			h.Set("Access-Control-Allow-Methods", h.Get("Allow"))
 			h.Set("Access-Control-Allow-Origin", conf.AllowOrigin)
 		}
+
+		w.WriteHeader(http.StatusNoContent)
 	})
 
 	// define routes
