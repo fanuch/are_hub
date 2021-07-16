@@ -191,7 +191,31 @@ func (ts *TelemetryServer) subscribe(id string, conn *websocket.Conn) {
 		select {
 		case msg := <-sub.buffer:
 			// message received, send it to the subscriber
-			e = writeTimeout(ctx, timeout, conn, msg)
+			// unmarshal the received data as generic JSON
+			// to re-marshal it as a part of a WS data response
+			var generic interface{}
+
+			e = json.Unmarshal(msg, &generic)
+
+			if e != nil {
+				// received busted JSON
+				handleError(e, conn)
+				tc.removeSub(sub)
+
+				return
+			}
+
+			bytes, e = json.Marshal(dataResponse(&generic))
+
+			if e != nil {
+				// busted JSON
+				handleError(e, conn)
+				tc.removeSub(sub)
+
+				return
+			}
+
+			e = writeTimeout(ctx, timeout, conn, bytes)
 
 			if e != nil {
 				handleError(e, conn)
