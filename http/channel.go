@@ -20,6 +20,11 @@ func NewChannel(channels are_hub.ChannelRepo) Channel {
 
 // Get all channels.
 func (c Channel) Index(w http.ResponseWriter, r *http.Request) error {
+	h := w.Header()
+
+	h.Set("Access-Control-Allow-Methods", h.Get("Allow"))
+	h.Set("Access-Control-Allow-Origin", "*")
+
 	channels, e := c.channels.All(r.Context())
 
 	if e != nil {
