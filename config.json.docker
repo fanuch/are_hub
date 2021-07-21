@@ -1,0 +1,11 @@
+{
+	"address": ":6060",
+	"allowOrigin": "*",
+	"mongodb": {
+		"user": "dev",
+		"password": "dev",
+		"mechanism": "SCRAM-SHA-256",
+		"address": "localhost:27017",
+		"name": "are"
+	}
+}
